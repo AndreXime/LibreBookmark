@@ -9,7 +9,8 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@tools/*": ["./src/tools/*"]
     },
     "allowJs": true,
     "skipLibCheck": true,
