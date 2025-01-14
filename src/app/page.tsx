@@ -14,11 +14,11 @@ export default function Home() {
 	const languageChange = (language?: string) => {
 		if (language) {
 			setLang(strings[language]);
-			window.localStorage.setItem('lang', language);
+			localStorage.setItem('lang', language);
 		} else {
 			const lang = navigator.language.startsWith('pt') ? 'ptbr' : 'en';
 			setLang(strings[lang]);
-			window.localStorage.setItem('lang', lang);
+			localStorage.setItem('lang', lang);
 		}
 	};
 
@@ -26,24 +26,29 @@ export default function Home() {
 	useEffect(() => {
 		languageChange();
 
-		const savedTheme = window.localStorage.getItem('theme') || 'light';
+		const savedTheme = localStorage.getItem('theme') || 'light';
 		setTheme(savedTheme);
 		document.documentElement.setAttribute('data-theme', savedTheme);
 
-		const storedBookmarks = JSON.parse(window.localStorage.getItem('bookmarks')) || [];
+		const storedBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 		setBookmarks(storedBookmarks);
 	}, []);
 
 	// Atualiza o Local Storage quando os bookmarks mudam
 	useEffect(() => {
-		window.localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+		localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
 	}, [bookmarks]);
+
+	const clearLocalStorage = () => {
+		localStorage.removeItem('bookmarks');
+		setBookmarks([]);
+	};
 
 	const toggleTheme = () => {
 		const newTheme = theme === 'light' ? 'dark' : 'light';
 		setTheme(newTheme);
 		document.documentElement.setAttribute('data-theme', newTheme);
-		window.localStorage.setItem('theme', newTheme);
+		localStorage.setItem('theme', newTheme);
 	};
 
 	// Adiciona um novo bookmark e busca thumbnail
@@ -149,10 +154,9 @@ export default function Home() {
 										{lang.form.thumbnailUrlPlaceholder}
 										<input
 											type="text"
-											name="url"
+											name="thumbnailUrl"
 											placeholder="https://placehold.co/150x150.png"
 											className="w-full placeholder-neutral-400 placeholder-opacity-50"
-											required
 										/>
 									</label>
 									<div className="label">
@@ -186,32 +190,41 @@ export default function Home() {
 								<div className="grid grid-cols-2 mt-4 gap-2">
 									<button
 										onClick={toggleTheme}
-										className="btn btn-accent border-none col-span-2">
+										className="btn btn-accent border-none col-span-1">
 										{theme === 'light' ? lang.card.themeButton.light : lang.card.themeButton.dark}
 									</button>
 
+									{lang === strings.ptbr ? (
+										<button
+											onClick={() => languageChange('en')}
+											className="btn btn-primary border-none gap-2 col-span-1"
+											style={{
+												backgroundColor: '#0033A0', // Azul dos EUA
+												color: '#fff',
+											}}>
+											<span className="text-xl">🇺🇸</span> EN
+										</button>
+									) : (
+										<button
+											onClick={() => languageChange('ptbr')}
+											className="btn btn-primary border-none gap-2 col-span-1 mt-2"
+											style={{
+												backgroundColor: '#00A859', // Verde do Brasil
+												color: '#fff',
+											}}>
+											<span className="text-xl">🇧🇷</span> PT BR
+										</button>
+									)}
 									<button
-										onClick={() => {
-											languageChange('en');
-										}}
-										className="btn btn-primary border-none gap-2 col-span-1 lg:col-span-1 mt-2"
+										onClick={exportLocalStorage}
+										className="btn btn-primary border-none gap-2 col-span-2 lg:col-span-1 mt-2"
 										style={{
-											backgroundColor: '#0033A0', // Azul dos EUA
+											backgroundColor: '#D999F3',
 											color: '#fff',
 										}}>
-										<span className="text-xl">🇺🇸</span> EN
+										<FaArrowAltCircleUp /> Limpar
 									</button>
-									<button
-										onClick={() => {
-											languageChange('ptbr');
-										}}
-										className="btn btn-primary border-none gap-2 col-span-1 lg:col-span-1 mt-2"
-										style={{
-											backgroundColor: '#00A859', // Verde do Brasil
-											color: '#fff',
-										}}>
-										<span className="text-xl">🇧🇷</span> PT BR
-									</button>
+
 									<button
 										onClick={exportLocalStorage}
 										className="btn btn-primary border-none gap-2 col-span-2 lg:col-span-1 mt-2"

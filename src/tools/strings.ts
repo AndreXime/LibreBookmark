@@ -6,7 +6,7 @@ const strings = {
 			localStorageInfo: 'Todos os dados são armazenados no navegador',
 			noBackend: 'Sem back-end, 100% cliente',
 			techStack: 'Next.js, Tailwind com DaisyUI',
-			themeButton: { dark: '🌙 Modo Escuro', light: '🌞 Modo Claro' },
+			themeButton: { dark: 'Modo Escuro', light: 'Modo Claro' },
 		},
 		bookmark: {
 			removeButton: 'Remover',
@@ -31,7 +31,7 @@ const strings = {
 			localStorageInfo: 'All data is stored in the browser',
 			noBackend: 'No back-end, 100% client-side',
 			techStack: 'Next.js, Tailwind with DaisyUI',
-			themeButton: { dark: '🌙 Dark Mode', light: '🌞 Light Mode' },
+			themeButton: { dark: 'Dark Mode', light: 'Light Mode' },
 		},
 		bookmark: {
 			removeButton: 'Remove',
