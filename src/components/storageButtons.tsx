@@ -1,5 +1,5 @@
 import { exportLocalStorage, importLocalStorage } from '@/tools';
-import { FaArrowAltCircleUp, FaArrowAltCircleDown } from 'react-icons/fa';
+import { IconImport, IconExport, IconClear } from '@tools/Icons';
 
 type bookmarkUseState = {
 	setBookmarks: React.Dispatch<React.SetStateAction<[]>>;
@@ -20,7 +20,7 @@ const storageButtons: React.FC<bookmarkUseState> = ({ setBookmarks }) => {
 					backgroundColor: '#D999F3',
 					color: '#fff',
 				}}>
-				<FaArrowAltCircleUp /> Limpar
+				<IconClear size={20} /> Limpar
 			</button>
 
 			<button
@@ -30,7 +30,7 @@ const storageButtons: React.FC<bookmarkUseState> = ({ setBookmarks }) => {
 					backgroundColor: '#2196F3',
 					color: '#fff',
 				}}>
-				<FaArrowAltCircleUp /> Exportar
+				<IconExport size={20} /> Exportar
 			</button>
 
 			<label
@@ -40,7 +40,7 @@ const storageButtons: React.FC<bookmarkUseState> = ({ setBookmarks }) => {
 					backgroundColor: '#FF9800',
 					color: '#fff',
 				}}>
-				<FaArrowAltCircleDown /> Importar
+				<IconImport size={20} /> Importar
 			</label>
 
 			<input

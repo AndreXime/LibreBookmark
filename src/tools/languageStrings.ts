@@ -3,7 +3,7 @@ const strings = {
 		config: {
 			infoButton: 'About',
 			themeButton: 'Themes',
-			storageButton: 'Manage storage',
+			storageButton: 'Manage',
 		},
 		modals: {
 			info: {
@@ -47,7 +47,7 @@ const strings = {
 				noBackend: 'Sem back-end, 100% cliente',
 				techStack: 'Next.js, Tailwind com DaisyUI',
 			},
-			storage: { title: 'Seu Storage do jeito que você quer' },
+			storage: { title: 'Organize seu armazenamento do seu jeito' },
 			themes: { title: 'Deixe o site com as cores que você mais gosta!' },
 			lang: { title: 'Mude a linguagem para outra' },
 		},

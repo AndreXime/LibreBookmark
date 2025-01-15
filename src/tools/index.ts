@@ -1,7 +1,7 @@
-import getThumbnail from "./getThumbnail"
-import strings from "./strings"
-import type { bookmark } from "./types"
-import { exportLocalStorage, importLocalStorage } from "./localStorageExport"
+import getThumbnail from './getThumbnail';
+import langStr from './languageStrings';
+import type { bookmark } from './types';
+import { exportLocalStorage, importLocalStorage } from './manageStorage';
 
-export { getThumbnail, strings, exportLocalStorage, importLocalStorage }
-export type { bookmark }
+export { getThumbnail, langStr, exportLocalStorage, importLocalStorage };
+export type { bookmark };

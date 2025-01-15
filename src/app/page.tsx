@@ -1,27 +1,22 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { FaTrash, FaInfoCircle, FaPalette, FaLanguage, FaCogs } from 'react-icons/fa';
 
-import type { bookmark } from '@tools/types';
-import { strings, getThumbnail } from '@tools/index';
-import ThemeButtons from '@/components/themesButtons';
-import StorageButtons from '@/components/storageButtons';
-import LangButtons from '@components/langButtons';
+import { langStr, getThumbnail } from '@tools/index';
+import { ThemeButtons, LangButtons, StorageButtons } from '@components/index';
+import Icons from '@tools/Icons';
 
-/*
-	localStorage tem seguintes chaves: bookmarks, lang, theme
-*/
+/* localStorage tem seguintes chaves: bookmarks, lang, theme */
 
 export default function Home() {
 	const [bookmarks, setBookmarks] = useState([]);
 	const [editingBookmark, setEditingBookmark] = useState(null); // Um bookmark está sendo editado
-	const [modal, setModal] = useState(''); // Para abrir modals usar Info storage Temas
-	const [lang, setLang] = useState(strings.ptbr);
+	const [modal, setModal] = useState(''); // Para abrir modals usar info storage temas lang
+	const [lang, setLang] = useState(langStr.ptbr);
 
 	// Carrega bookmarks, linguagem tema e boomarks
 	useEffect(() => {
 		const lang = localStorage.getItem('lang') || navigator.language.startsWith('pt') ? 'ptbr' : 'en';
-		setLang(strings[lang]);
+		setLang(langStr[lang]);
 
 		const savedTheme = localStorage.getItem('theme') || 'light';
 		document.documentElement.setAttribute('data-theme', savedTheme);
@@ -97,6 +92,20 @@ export default function Home() {
 		setEditingBookmark(null); // Fecha o modal
 	};
 
+	// Mover um bookmark para cima ou para baixo
+	const moveBookmark = (url: string, direction: 'up' | 'down') => {
+		const currentIndex = bookmarks.findIndex((bookmark) => bookmark.url === url);
+		const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+
+		// Copia a lista, remove no indice antigo e adiciona no novo indice
+		const updatedBookmarks = [...bookmarks];
+		const [movedBookmark] = updatedBookmarks.splice(currentIndex, 1);
+		updatedBookmarks.splice(newIndex, 0, movedBookmark);
+
+		// Atualiza o estado
+		setBookmarks(updatedBookmarks);
+	};
+
 	return (
 		<div className="min-h-screen bg-base-200 p-6">
 			<div className="max-w-6xl mx-auto">
@@ -148,7 +157,7 @@ export default function Home() {
 								<button
 									type="submit"
 									className="btn btn-primary">
-									{lang.form.addButton}
+									<Icons.add /> {lang.form.addButton}
 								</button>
 							</form>
 						</div>
@@ -158,38 +167,46 @@ export default function Home() {
 								<button
 									onClick={() => setModal('info')}
 									className="btn border-none col-span-1">
-									<FaInfoCircle color="#007bff" /> {lang.config.infoButton}
+									<Icons.info color="#007bff" /> {lang.config.infoButton}
 								</button>
 								<button
 									onClick={() => setModal('temas')}
 									className="btn border-none col-span-1">
-									<FaPalette color="#28a745" /> {lang.config.themeButton}
+									<Icons.pallete color="#28a745" /> {lang.config.themeButton}
 								</button>
 								<button
 									onClick={() => setModal('storage')}
 									className="btn border-none col-span-1">
-									<FaCogs color="#17a2b8" /> {lang.config.storageButton}
+									<Icons.gear color="#17a2b8" /> {lang.config.storageButton}
 								</button>
 								<button
 									onClick={() => setModal('lang')}
 									className="btn border-none col-span-1">
-									<FaLanguage color="#ffc107" /> Idiomas
+									<Icons.language color="#ffc107" /> Idiomas
 								</button>
 							</div>
-							<h2 className="card-title text-xl mx-auto text-center my-3">Como usar</h2>
-							<p className="text-base">Adicione titulo e urls para salvar seus sites.</p>
-							<p className="text-base">Clique nas imagens geradas para visitá-lo.</p>
-							<p className="text-base">Clique no nome do site para editar.</p>
+							<h2 className="card-title text-xl mx-auto text-center my-4">Como usar</h2>
+							<ul>
+								<li>
+									<strong>Adicione: </strong>Preencha o formulario para salvar seus sites.
+								</li>
+								<li>
+									<strong>Visite: </strong>Clique nas imagens geradas para acessar os sites salvos.
+								</li>
+								<li>
+									<strong>Personalize: </strong>Clique no nome do site para remover, mover ou editar nome ou url.
+								</li>
+							</ul>
 						</div>
 					</div>
 				</div>
 
 				{/* Lista de Bookmarks */}
 				<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-					{bookmarks.map((bookmark: bookmark, index) => (
+					{bookmarks.map((bookmark, index) => (
 						<div
 							key={index}
-							className="card bg-base-300 card- shadow-xl">
+							className="card bg-base-300 shadow-xl">
 							<a
 								href={bookmark.url}
 								target="_blank"
@@ -205,7 +222,7 @@ export default function Home() {
 										<img
 											src={bookmark.thumbnail}
 											alt="Thumbnail"
-											className="w-full h-32 object-cover"
+											className="w-full h-32 object-cover bg-base-200"
 										/>
 									) : (
 										<div className="w-full h-32 bg-gray-300 flex items-center justify-center">
@@ -276,12 +293,24 @@ export default function Home() {
 									<button
 										type="submit"
 										className="btn btn-primary">
-										{lang.bookmark.saveButton}
+										<Icons.save /> {lang.bookmark.saveButton}
 									</button>
 									<button
 										onClick={() => removeBookmark(editingBookmark.url)}
 										className="btn btn-error w-full">
-										<FaTrash /> Remover
+										<Icons.trash /> Remover
+									</button>
+								</div>
+								<div className="card-actions grid grid-cols-2">
+									<button
+										onClick={() => moveBookmark(editingBookmark.url, 'up')}
+										className="btn btn-outline">
+										<Icons.arrowLeft /> Mover para esquerda
+									</button>
+									<button
+										onClick={() => moveBookmark(editingBookmark.url, 'down')}
+										className="btn btn-outline">
+										Mover para direita <Icons.arrowRight />
 									</button>
 								</div>
 							</form>
@@ -388,7 +417,7 @@ export default function Home() {
 						{modal === 'lang' && (
 							<LangButtons
 								setLang={setLang}
-								strings={strings}
+								langStr={langStr}
 							/>
 						)}
 					</div>
