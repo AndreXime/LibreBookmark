@@ -4,36 +4,59 @@ const ThemeButtons: React.FC = () => {
 		localStorage.setItem('theme', newTheme);
 	};
 
-	const themes = [
+	const lightThemes = [
 		'light',
-		'dark',
-		'cupcake',
-		'bumblebee',
-		'emerald',
-		'corporate',
-		'synthwave',
-		'retro',
-		'cyberpunk',
 		'valentine',
-		'halloween',
+		'retro',
+		'nord',
+		'cupcake',
 		'garden',
-		'forest',
-		'aqua',
-		'lofi',
+		'pastel',
+		'fantasy',
+		'wireframe',
+		'autumn',
+		'lemonade',
+		'bumblebee',
+	];
+
+	const darkThemes = [
+		'dark',
+		'halloween',
+		'luxury',
 		'coffee',
+		'sunset',
+		'forest',
+		'black',
+		'dracula',
+		'business',
+		'night',
+		'dim',
+		'synthwave',
 	];
 
 	return (
-		<div className="grid grid-cols-2 gap-4">
-			{themes.map((theme) => (
-				<button
-					key={theme}
-					onClick={() => toggleTheme(theme)}
-					className="btn w-full text-center capitalize">
-					{theme}
-				</button>
+		<>
+			{lightThemes.map((theme, index) => (
+				<div
+					key={`${theme} e ${darkThemes[index]}`}
+					className="grid grid-cols-2 gap-4 mb-4">
+					<button
+						data-theme={theme}
+						key={theme}
+						onClick={() => toggleTheme(theme)}
+						className="btn w-full text-center capitalize">
+						{theme}
+					</button>
+					<button
+						data-theme={darkThemes[index]}
+						key={darkThemes[index]}
+						onClick={() => toggleTheme(darkThemes[index])}
+						className="btn w-full text-center capitalize">
+						{darkThemes[index]}
+					</button>
+				</div>
 			))}
-		</div>
+		</>
 	);
 };
 
