@@ -1,33 +1,29 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { FaTrash, FaEdit, FaArrowAltCircleDown, FaArrowAltCircleUp } from 'react-icons/fa';
+import { FaTrash, FaInfoCircle, FaPalette, FaLanguage, FaCogs } from 'react-icons/fa';
 
 import type { bookmark } from '@tools/types';
-import { exportLocalStorage, importLocalStorage, strings, getThumbnail } from '@tools/index';
+import { strings, getThumbnail } from '@tools/index';
+import ThemeButtons from '@/components/themesButtons';
+import StorageButtons from '@/components/storageButtons';
+import LangButtons from '@components/langButtons';
+
+/*
+	localStorage tem seguintes chaves: bookmarks, lang, theme
+*/
 
 export default function Home() {
 	const [bookmarks, setBookmarks] = useState([]);
 	const [editingBookmark, setEditingBookmark] = useState(null); // Um bookmark está sendo editado
-	const [theme, setTheme] = useState('dark');
+	const [modal, setModal] = useState(''); // Para abrir modals usar Info storage Temas
 	const [lang, setLang] = useState(strings.ptbr);
-
-	const languageChange = (language?: string) => {
-		if (language) {
-			setLang(strings[language]);
-			localStorage.setItem('lang', language);
-		} else {
-			const lang = navigator.language.startsWith('pt') ? 'ptbr' : 'en';
-			setLang(strings[lang]);
-			localStorage.setItem('lang', lang);
-		}
-	};
 
 	// Carrega bookmarks, linguagem tema e boomarks
 	useEffect(() => {
-		languageChange();
+		const lang = localStorage.getItem('lang') || navigator.language.startsWith('pt') ? 'ptbr' : 'en';
+		setLang(strings[lang]);
 
 		const savedTheme = localStorage.getItem('theme') || 'light';
-		setTheme(savedTheme);
 		document.documentElement.setAttribute('data-theme', savedTheme);
 
 		const storedBookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
@@ -38,18 +34,6 @@ export default function Home() {
 	useEffect(() => {
 		localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
 	}, [bookmarks]);
-
-	const clearLocalStorage = () => {
-		localStorage.removeItem('bookmarks');
-		setBookmarks([]);
-	};
-
-	const toggleTheme = () => {
-		const newTheme = theme === 'light' ? 'dark' : 'light';
-		setTheme(newTheme);
-		document.documentElement.setAttribute('data-theme', newTheme);
-		localStorage.setItem('theme', newTheme);
-	};
 
 	// Adiciona um novo bookmark e busca thumbnail
 	const addBookmark = async (e) => {
@@ -84,7 +68,7 @@ export default function Home() {
 	};
 
 	// Remove um bookmark
-	const removeBookmark = (url) => {
+	const removeBookmark = (url: string) => {
 		setBookmarks(bookmarks.filter((bookmark) => bookmark.url !== url));
 	};
 
@@ -118,10 +102,7 @@ export default function Home() {
 			<div className="max-w-6xl mx-auto">
 				{/* Card para Adicionar Bookmark */}
 				<div className="collapse collapse-plus bg-base-100 shadow-xl mb-6">
-					<input
-						type="checkbox"
-						className="peer"
-					/>
+					<input type="checkbox" />
 					<div className="collapse-title text-xl font-medium">LibreBookmarks</div>
 					<div className="collapse-content grid grid-cols-1 md:grid-cols-3">
 						<div className="card-body col-span-2">
@@ -172,87 +153,33 @@ export default function Home() {
 							</form>
 						</div>
 						<div className="card-body col-span-1">
-							<h2 className="card-title text-xl text-center">{lang.card.information}</h2>
-							<ul className="list-disc list-inside">
-								<li>
-									{lang.card.sourceCode}{' '}
-									<a
-										href="https://github.com/seu-usuario/librebookmarks"
-										target="_blank"
-										rel="noopener noreferrer"
-										className="link link-primary">
-										GitHub
-									</a>
-								</li>
-								<li>{lang.card.localStorageInfo}</li>
-								<li>{lang.card.noBackend}</li>
-								<li>{lang.card.techStack}</li>
-								<div className="grid grid-cols-2 mt-4 gap-2">
-									<button
-										onClick={toggleTheme}
-										className="btn btn-accent border-none col-span-1">
-										{theme === 'light' ? lang.card.themeButton.light : lang.card.themeButton.dark}
-									</button>
-
-									{lang === strings.ptbr ? (
-										<button
-											onClick={() => languageChange('en')}
-											className="btn btn-primary border-none gap-2 col-span-1"
-											style={{
-												backgroundColor: '#0033A0', // Azul dos EUA
-												color: '#fff',
-											}}>
-											<span className="text-xl">🇺🇸</span> EN
-										</button>
-									) : (
-										<button
-											onClick={() => languageChange('ptbr')}
-											className="btn btn-primary border-none gap-2 col-span-1 mt-2"
-											style={{
-												backgroundColor: '#00A859', // Verde do Brasil
-												color: '#fff',
-											}}>
-											<span className="text-xl">🇧🇷</span> PT BR
-										</button>
-									)}
-									<button
-										onClick={exportLocalStorage}
-										className="btn btn-primary border-none gap-2 col-span-2 lg:col-span-1 mt-2"
-										style={{
-											backgroundColor: '#D999F3',
-											color: '#fff',
-										}}>
-										<FaArrowAltCircleUp /> Limpar
-									</button>
-
-									<button
-										onClick={exportLocalStorage}
-										className="btn btn-primary border-none gap-2 col-span-2 lg:col-span-1 mt-2"
-										style={{
-											backgroundColor: '#2196F3',
-											color: '#fff',
-										}}>
-										<FaArrowAltCircleUp /> Exportar
-									</button>
-
-									<label
-										htmlFor="file-input"
-										className="btn btn-primary border-none gap-2 col-span-2 lg:col-span-1 mt-2"
-										style={{
-											backgroundColor: '#FF9800',
-											color: '#fff',
-										}}>
-										<FaArrowAltCircleDown /> Importar
-									</label>
-									<input
-										id="file-input"
-										type="file"
-										accept=".json"
-										onChange={importLocalStorage}
-										className="hidden" // Esconde o input real
-									/>
-								</div>
-							</ul>
+							<h2 className="card-title text-xl mx-auto text-center">Configurações</h2>
+							<div className="grid grid-cols-2 mt-4 gap-2">
+								<button
+									onClick={() => setModal('info')}
+									className="btn border-none col-span-1">
+									<FaInfoCircle color="#007bff" /> {lang.config.infoButton}
+								</button>
+								<button
+									onClick={() => setModal('temas')}
+									className="btn border-none col-span-1">
+									<FaPalette color="#28a745" /> {lang.config.themeButton}
+								</button>
+								<button
+									onClick={() => setModal('storage')}
+									className="btn border-none col-span-1">
+									<FaCogs color="#17a2b8" /> {lang.config.storageButton}
+								</button>
+								<button
+									onClick={() => setModal('lang')}
+									className="btn border-none col-span-1">
+									<FaLanguage color="#ffc107" /> Idiomas
+								</button>
+							</div>
+							<h2 className="card-title text-xl mx-auto text-center my-3">Como usar</h2>
+							<p className="text-base">Adicione titulo e urls para salvar seus sites.</p>
+							<p className="text-base">Clique nas imagens geradas para visitá-lo.</p>
+							<p className="text-base">Clique no nome do site para editar.</p>
 						</div>
 					</div>
 				</div>
@@ -278,7 +205,7 @@ export default function Home() {
 										<img
 											src={bookmark.thumbnail}
 											alt="Thumbnail"
-											className="w-full h-32 object-contain"
+											className="w-full h-32 object-cover"
 										/>
 									) : (
 										<div className="w-full h-32 bg-gray-300 flex items-center justify-center">
@@ -289,18 +216,12 @@ export default function Home() {
 							</a>
 							<div className="card-body p-0 flex items-center justify-center">
 								<div className="w-full h-full">
-									<h1 className="text-center text-xl font-bold my-2 overflow-hidden">{bookmark.title}</h1>
-									<div className="card-actions grid grid-cols-2 gap-2">
-										<button
-											onClick={() => removeBookmark(bookmark.url)}
-											className="btn btn-ghost w-full">
-											<FaTrash color="#ff5733" />
-										</button>
-										<button
+									<div className="card-actions justify-center">
+										<h1
 											onClick={() => setEditingBookmark(bookmark)}
-											className="btn btn-ghost w-full">
-											<FaEdit color="#33a9ff" />
-										</button>
+											className="text-center cursor-pointer text-xl font-bold my-2 overflow-hidden">
+											{bookmark.title}
+										</h1>
 									</div>
 								</div>
 							</div>
@@ -324,7 +245,7 @@ export default function Home() {
 							onClick={() => setEditingBookmark(null)}>
 							✕
 						</label>
-						<h3 className="text-lg font-bold">{lang.bookmark.editBookmark}</h3>
+						<h3 className="text-lg font-bold mb-4">{lang.bookmark.editBookmark}</h3>
 						{editingBookmark && (
 							<form
 								onSubmit={updateBookmark}
@@ -351,12 +272,124 @@ export default function Home() {
 									placeholder="URL da Thumbnail (opcional)"
 									className="input input-bordered w-full"
 								/>
-								<button
-									type="submit"
-									className="btn btn-primary">
-									{lang.bookmark.saveButton}
-								</button>
+								<div className="card-actions grid grid-cols-2">
+									<button
+										type="submit"
+										className="btn btn-primary">
+										{lang.bookmark.saveButton}
+									</button>
+									<button
+										onClick={() => removeBookmark(editingBookmark.url)}
+										className="btn btn-error w-full">
+										<FaTrash /> Remover
+									</button>
+								</div>
 							</form>
+						)}
+					</div>
+				</div>
+
+				<input
+					type="checkbox"
+					id="info-modal"
+					className="modal-toggle"
+					checked={modal === 'info'}
+					readOnly
+				/>
+				<div className="modal">
+					<div className="modal-box relative">
+						<label
+							htmlFor="info-modal"
+							className="btn btn-sm btn-circle absolute right-2 top-2"
+							onClick={() => setModal(null)}>
+							✕
+						</label>
+						<h3 className="text-lg font-bold mb-4">{lang.modals.info.title}</h3>
+						{modal === 'info' && (
+							<ul className="list-disc list-inside">
+								<li>
+									{lang.modals.info.sourceCode}{' '}
+									<a
+										href="https://github.com/seu-usuario/librebookmarks"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="link link-primary">
+										GitHub
+									</a>
+								</li>
+								<li>{lang.modals.info.localStorageInfo}</li>
+								<li>{lang.modals.info.noBackend}</li>
+								<li>{lang.modals.info.techStack}</li>
+							</ul>
+						)}
+					</div>
+				</div>
+
+				<input
+					type="checkbox"
+					id="temas-modal"
+					className="modal-toggle"
+					checked={modal === 'temas'}
+					readOnly
+				/>
+				<div className="modal">
+					<div className="modal-box relative">
+						<label
+							htmlFor="temas-modal"
+							className="btn btn-sm btn-circle absolute right-2 top-2"
+							onClick={() => setModal(null)}>
+							✕
+						</label>
+						<h3 className="text-lg font-bold mb-4">{lang.modals.themes.title}</h3>
+						{modal === 'temas' && (
+							<div>
+								<ThemeButtons />
+							</div>
+						)}
+					</div>
+				</div>
+
+				<input
+					type="checkbox"
+					id="storage-modal"
+					className="modal-toggle"
+					checked={modal === 'storage'}
+					readOnly
+				/>
+				<div className="modal">
+					<div className="modal-box relative">
+						<label
+							htmlFor="storage-modal"
+							className="btn btn-sm btn-circle absolute right-2 top-2"
+							onClick={() => setModal(null)}>
+							✕
+						</label>
+						<h3 className="text-lg font-bold mb-4">{lang.modals.storage.title}</h3>
+						{modal === 'storage' && <StorageButtons setBookmarks={setBookmarks} />}
+					</div>
+				</div>
+
+				<input
+					type="checkbox"
+					id="lang-modal"
+					className="modal-toggle"
+					checked={modal === 'lang'}
+					readOnly
+				/>
+				<div className="modal">
+					<div className="modal-box relative">
+						<label
+							htmlFor="lang-modal"
+							className="btn btn-sm btn-circle absolute right-2 top-2"
+							onClick={() => setModal(null)}>
+							✕
+						</label>
+						<h3 className="text-lg font-bold mb-4">{lang.modals.lang.title}</h3>
+						{modal === 'lang' && (
+							<LangButtons
+								setLang={setLang}
+								strings={strings}
+							/>
 						)}
 					</div>
 				</div>
