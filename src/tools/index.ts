@@ -1,7 +1,5 @@
 import getThumbnail from './getThumbnail';
-import langStr from './languageStrings';
-import type { bookmark } from './types';
 import { exportLocalStorage, importLocalStorage } from './manageStorage';
+import Icons from './Icons';
 
-export { getThumbnail, langStr, exportLocalStorage, importLocalStorage };
-export type { bookmark };
+export { getThumbnail, exportLocalStorage, importLocalStorage, Icons };

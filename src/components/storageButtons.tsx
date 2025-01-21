@@ -1,11 +1,19 @@
 import { exportLocalStorage, importLocalStorage } from '@/tools';
 import { IconImport, IconExport, IconClear } from '@tools/Icons';
 
-type bookmarkUseState = {
-	setBookmarks: React.Dispatch<React.SetStateAction<[]>>;
+type langStorage = {
+	title: string;
+	import: string;
+	export: string;
+	clear: string;
 };
 
-const storageButtons: React.FC<bookmarkUseState> = ({ setBookmarks }) => {
+type bookmarkUseState = {
+	setBookmarks: React.Dispatch<React.SetStateAction<[]>>;
+	lang: langStorage;
+};
+
+const storageButtons: React.FC<bookmarkUseState> = ({ setBookmarks, lang }) => {
 	const clearLocalStorage = () => {
 		localStorage.removeItem('bookmarks');
 		setBookmarks([]);
@@ -20,7 +28,7 @@ const storageButtons: React.FC<bookmarkUseState> = ({ setBookmarks }) => {
 					backgroundColor: '#D999F3',
 					color: '#fff',
 				}}>
-				<IconClear size={20} /> Limpar
+				<IconClear size={20} /> {lang.clear}
 			</button>
 
 			<button
@@ -30,7 +38,7 @@ const storageButtons: React.FC<bookmarkUseState> = ({ setBookmarks }) => {
 					backgroundColor: '#2196F3',
 					color: '#fff',
 				}}>
-				<IconExport size={20} /> Exportar
+				<IconExport size={20} /> {lang.export}
 			</button>
 
 			<label
@@ -40,7 +48,7 @@ const storageButtons: React.FC<bookmarkUseState> = ({ setBookmarks }) => {
 					backgroundColor: '#FF9800',
 					color: '#fff',
 				}}>
-				<IconImport size={20} /> Importar
+				<IconImport size={20} /> {lang.import}
 			</label>
 
 			<input

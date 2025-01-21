@@ -1,15 +1,13 @@
-type NestedStrings = {
-	[key: string]: string | NestedStrings;
-};
+import type { LanguagesType, LanguagesSingularType } from '@language/index';
 
 type LangButtonsProps = {
-	setLang: React.Dispatch<React.SetStateAction<NestedStrings>>;
-	langStr: Record<string, NestedStrings>; // Modificado para refletir a estrutura aninhada
+	setLang: React.Dispatch<React.SetStateAction<LanguagesSingularType>>;
+	langStr: LanguagesType;
 };
 
 const LangButtons: React.FC<LangButtonsProps> = ({ setLang, langStr }) => {
 	const languageChange = (language: string) => {
-		setLang(langStr[language]);
+		setLang(langStr[language] as LanguagesSingularType);
 		localStorage.setItem('lang', language);
 	};
 
@@ -22,7 +20,7 @@ const LangButtons: React.FC<LangButtonsProps> = ({ setLang, langStr }) => {
 					backgroundColor: '#0033A0', // Azul dos EUA
 					color: '#fff',
 				}}>
-				<span className="text-xl">🇺🇸</span> English
+				🇺🇸 English
 			</button>
 
 			<button
@@ -32,7 +30,7 @@ const LangButtons: React.FC<LangButtonsProps> = ({ setLang, langStr }) => {
 					backgroundColor: '#006600', // Verde do Brasil
 					color: '#fff',
 				}}>
-				<span className="text-xl">🇧🇷</span> Português
+				🇧🇷 Português
 			</button>
 
 			<button

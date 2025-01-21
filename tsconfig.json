@@ -7,7 +7,8 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"@tools/*": ["./src/tools/*"],
-			"@components/*": ["./src/components/*"]
+			"@components/*": ["./src/components/*"],
+			"@language/*": ["./src/language/*"]
 		},
 		"allowJs": true,
 		"skipLibCheck": true,

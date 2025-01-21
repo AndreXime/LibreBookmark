@@ -1,9 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
 
-import { langStr, getThumbnail } from '@tools/index';
+import { getThumbnail, Icons } from '@tools/index';
 import { ThemeButtons, LangButtons, StorageButtons } from '@components/index';
-import Icons from '@tools/Icons';
+import langStr from '@language/index';
 
 /* localStorage tem seguintes chaves: bookmarks, lang, theme */
 
@@ -119,7 +119,7 @@ export default function Home() {
 								onSubmit={addBookmark}
 								className="form-control flex-col gap-4">
 								<label className="input input-bordered flex items-center gap-2 w-full">
-									{lang.form.titlePlaceholder}
+									{lang.formAddBookmark.titlePlaceholder}
 									<input
 										type="text"
 										name="title"
@@ -129,7 +129,7 @@ export default function Home() {
 									/>
 								</label>
 								<label className="input input-bordered flex items-center gap-2">
-									{lang.form.urlPlaceholder}
+									{lang.formAddBookmark.urlPlaceholder}
 									<input
 										type="text"
 										name="url"
@@ -141,7 +141,7 @@ export default function Home() {
 
 								<label className="form-control w-full">
 									<label className="input input-bordered flex items-center gap-2">
-										{lang.form.thumbnailUrlPlaceholder}
+										{lang.formAddBookmark.thumbnailUrlPlaceholder}
 										<input
 											type="text"
 											name="thumbnailUrl"
@@ -150,14 +150,14 @@ export default function Home() {
 										/>
 									</label>
 									<div className="label">
-										<span className="label-text-alt">{lang.form.thumbnailHint}</span>
+										<span className="label-text-alt">{lang.formAddBookmark.thumbnailHint}</span>
 									</div>
 								</label>
 
 								<button
 									type="submit"
 									className="btn btn-primary">
-									<Icons.add /> {lang.form.addButton}
+									<Icons.add /> {lang.formAddBookmark.addButton}
 								</button>
 							</form>
 						</div>
@@ -167,34 +167,34 @@ export default function Home() {
 								<button
 									onClick={() => setModal('info')}
 									className="btn border-none col-span-1">
-									<Icons.info color="#007bff" /> {lang.config.infoButton}
+									<Icons.info color="#007bff" /> {lang.buttons.infoButton}
 								</button>
 								<button
 									onClick={() => setModal('temas')}
 									className="btn border-none col-span-1">
-									<Icons.pallete color="#28a745" /> {lang.config.themeButton}
+									<Icons.pallete color="#28a745" /> {lang.buttons.themeButton}
 								</button>
 								<button
 									onClick={() => setModal('storage')}
 									className="btn border-none col-span-1">
-									<Icons.gear color="#17a2b8" /> {lang.config.storageButton}
+									<Icons.gear color="#17a2b8" /> {lang.buttons.storageButton}
 								</button>
 								<button
 									onClick={() => setModal('lang')}
 									className="btn border-none col-span-1">
-									<Icons.language color="#ffc107" /> Idiomas
+									<Icons.language color="#ffc107" /> {lang.buttons.langButton}
 								</button>
 							</div>
-							<h2 className="card-title text-xl mx-auto text-center my-4">Como usar</h2>
+							<h2 className="card-title text-xl mx-auto text-center my-4">{lang.howToUse.title}</h2>
 							<ul>
 								<li>
-									<strong>Adicione: </strong>Preencha o formulario para salvar seus sites.
+									<strong>{lang.howToUse.Adicione[0]} </strong> {lang.howToUse.Adicione[1]}
 								</li>
 								<li>
-									<strong>Visite: </strong>Clique nas imagens geradas para acessar os sites salvos.
+									<strong>{lang.howToUse.Visite[0]} </strong> {lang.howToUse.Visite[1]}
 								</li>
 								<li>
-									<strong>Personalize: </strong>Clique no nome do site para remover, mover ou editar nome ou url.
+									<strong>{lang.howToUse.Personalize[0]} </strong> {lang.howToUse.Personalize[1]}
 								</li>
 							</ul>
 						</div>
@@ -216,7 +216,7 @@ export default function Home() {
 									{/* Se a thumbnail está carregando ou não disponível, mostra um placeholder */}
 									{bookmark.loading ? (
 										<div className="w-full h-32 bg-gray-300 flex items-center justify-center">
-											<span className="text-gray-500">{lang.bookmark.loadingThumbnail}</span>
+											<span className="text-gray-500">{lang.imageBookmark.loadingThumbnail}</span>
 										</div>
 									) : bookmark.thumbnail ? (
 										<img
@@ -226,7 +226,7 @@ export default function Home() {
 										/>
 									) : (
 										<div className="w-full h-32 bg-gray-300 flex items-center justify-center">
-											<span className="text-gray-500">{lang.bookmark.noImage}</span>
+											<span className="text-gray-500">{lang.imageBookmark.noImage}</span>
 										</div>
 									)}
 								</figure>
@@ -262,7 +262,7 @@ export default function Home() {
 							onClick={() => setEditingBookmark(null)}>
 							✕
 						</label>
-						<h3 className="text-lg font-bold mb-4">{lang.bookmark.editBookmark}</h3>
+						<h3 className="text-lg font-bold mb-4">{lang.editBookmark.title}</h3>
 						{editingBookmark && (
 							<form
 								onSubmit={updateBookmark}
@@ -293,24 +293,25 @@ export default function Home() {
 									<button
 										type="submit"
 										className="btn btn-primary">
-										<Icons.save /> {lang.bookmark.saveButton}
+										<Icons.save /> {lang.editBookmark.saveButton}
 									</button>
 									<button
 										onClick={() => removeBookmark(editingBookmark.url)}
 										className="btn btn-error w-full">
-										<Icons.trash /> Remover
+										<Icons.trash /> {lang.editBookmark.removeButton}
 									</button>
 								</div>
+								<span className="text-center font-bold text-lg">{lang.editBookmark.moveTitle}</span>
 								<div className="card-actions grid grid-cols-2">
 									<button
 										onClick={() => moveBookmark(editingBookmark.url, 'up')}
-										className="btn btn-outline">
-										<Icons.arrowLeft /> Mover para esquerda
+										className="btn btn-outline text-nowrap">
+										<Icons.arrowLeft /> {lang.editBookmark.moveLeft}
 									</button>
 									<button
 										onClick={() => moveBookmark(editingBookmark.url, 'down')}
 										className="btn btn-outline">
-										Mover para direita <Icons.arrowRight />
+										{lang.editBookmark.moveRight} <Icons.arrowRight />
 									</button>
 								</div>
 							</form>
@@ -337,18 +338,18 @@ export default function Home() {
 						{modal === 'info' && (
 							<ul className="list-disc list-inside">
 								<li>
-									{lang.modals.info.sourceCode}{' '}
+									{lang.modals.info.description[0]}{' '}
 									<a
-										href="https://github.com/seu-usuario/librebookmarks"
+										href="https://github.com/AndreXime/LibreBookmark"
 										target="_blank"
 										rel="noopener noreferrer"
 										className="link link-primary">
 										GitHub
 									</a>
 								</li>
-								<li>{lang.modals.info.localStorageInfo}</li>
-								<li>{lang.modals.info.noBackend}</li>
-								<li>{lang.modals.info.techStack}</li>
+								<li>{lang.modals.info.description[1]}</li>
+								<li>{lang.modals.info.description[2]}</li>
+								<li>{lang.modals.info.description[3]}</li>
 							</ul>
 						)}
 					</div>
@@ -394,7 +395,12 @@ export default function Home() {
 							✕
 						</label>
 						<h3 className="text-lg font-bold mb-4">{lang.modals.storage.title}</h3>
-						{modal === 'storage' && <StorageButtons setBookmarks={setBookmarks} />}
+						{modal === 'storage' && (
+							<StorageButtons
+								lang={lang.modals.storage}
+								setBookmarks={setBookmarks}
+							/>
+						)}
 					</div>
 				</div>
 
