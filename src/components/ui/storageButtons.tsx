@@ -1,3 +1,4 @@
+import { Bookmark } from '@/context/context';
 import { exportLocalStorage, importLocalStorage } from '@/tools';
 import { IconImport, IconExport, IconClear } from '@tools/Icons';
 
@@ -9,7 +10,7 @@ type langStorage = {
 };
 
 type bookmarkUseState = {
-	setBookmarks: React.Dispatch<React.SetStateAction<[]>>;
+	setBookmarks: (bookmarks: Bookmark[]) => void;
 	lang: langStorage;
 };
 

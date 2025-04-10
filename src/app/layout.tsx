@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import '../styles/global.css';
+import './global.css';
+import { BookmarksProvider } from '@/context/context';
 
 export const metadata: Metadata = {
 	title: 'LibreBookmark',
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html>
-			<body>{children}</body>
+			<BookmarksProvider>
+				<body>{children}</body>
+			</BookmarksProvider>
 		</html>
 	);
 }

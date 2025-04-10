@@ -1,21 +1,16 @@
-const getThumbnail = async (url) => {
-	const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(
-		url
-	)}&screenshot=true`;
-
+const getThumbnail = async (url: string): Promise<string | null> => {
 	try {
-		const response = await fetch(apiUrl);
-		const data = await response.json();
+		const res = await fetch(`/api/thumbnail?url=${encodeURIComponent(url)}`);
+		const data = await res.json();
 
-		if (data.lighthouseResult && data.lighthouseResult.audits['final-screenshot']) {
-			return `data:image/jpeg;base64,${data.lighthouseResult.audits['final-screenshot'].details.data.replace(
-				/^data:image\/jpeg;base64,/,
-				''
-			)}`;
+		if (res.ok && data.thumbnail) {
+			return data.thumbnail;
 		}
-		return null; // Sem thumbnail
+
+		console.error('Erro:', data.error);
+		return null;
 	} catch (error) {
-		console.error('Erro ao buscar thumbnail:', error);
+		console.error('Erro ao gerar thumbnail:', error);
 		return null;
 	}
 };

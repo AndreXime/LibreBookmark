@@ -46,8 +46,7 @@ const ptbr = {
 		titlePlaceholder: 'Título',
 		urlPlaceholder: 'URL',
 		thumbnailUrlPlaceholder: 'Thumbnail',
-		thumbnailHint:
-			'Deixe branco para gerar automaticamente ou você pode usar URLs como thumbnail que terminam com .png, .jpeg, .svg, .webp',
+		thumbnailHint: 'Deixe branco para gerar o servidor gerar uma thumbnail ou use uma URL de imagem como thumbnail',
 		addButton: 'Adicionar',
 	},
 };

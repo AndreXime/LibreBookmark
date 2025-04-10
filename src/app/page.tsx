@@ -1,17 +1,14 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { getThumbnail, Icons } from '@tools/index';
-import { ThemeButtons, LangButtons, StorageButtons } from '@components/index';
+import { useBookmarks } from '@/context/context';
 import langStr from '@language/index';
+import { EditModal, InfoModal, LangModal, StorageModal, TemasModal } from '@/components';
 
 /* localStorage tem seguintes chaves: bookmarks, lang, theme */
-
 export default function Home() {
-	const [bookmarks, setBookmarks] = useState([]);
-	const [editingBookmark, setEditingBookmark] = useState(null); // Um bookmark está sendo editado
-	const [modal, setModal] = useState(''); // Para abrir modals usar info storage temas lang
-	const [lang, setLang] = useState(langStr.ptbr);
+	const { lang, setLang, setModal, editingBookmark, setEditingBookmark, bookmarks, setBookmarks } = useBookmarks();
 
 	// Carrega bookmarks, linguagem tema e boomarks
 	useEffect(() => {
@@ -31,13 +28,13 @@ export default function Home() {
 	}, [bookmarks]);
 
 	// Adiciona um novo bookmark e busca thumbnail
-	const addBookmark = async (e) => {
+	const addBookmark = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		const formData = new FormData(e.target);
-		const url = formData.get('url');
-		const thumbnailUrl = formData.get('thumbnailUrl');
-		const title = formData.get('title');
+		const formData = new FormData(e.currentTarget);
+		const url = String(formData.get('url'));
+		const thumbnailUrl = String(formData.get('thumbnailUrl'));
+		const title = String(formData.get('title'));
 
 		if (url && !bookmarks.find((bm) => bm.url === url)) {
 			const newEntry = {
@@ -50,7 +47,7 @@ export default function Home() {
 			// Adiciona o card antes de gerar a thumbnail automatica
 			setBookmarks([...bookmarks, newEntry]);
 
-			e.target.reset();
+			e.currentTarget.reset();
 
 			// Se a thumbnail não for fornecida, tenta gerar automaticamente
 			if (!thumbnailUrl) {
@@ -68,13 +65,13 @@ export default function Home() {
 	};
 
 	// Edita um bookmark com um modal
-	const updateBookmark = (e) => {
+	const updateBookmark = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		const formData = new FormData(e.target);
-		const updatedTitle = formData.get('title');
-		const updatedUrl = formData.get('url');
-		const updatedThumbnailUrl = formData.get('thumbnailUrl');
+		const formData = new FormData(e.currentTarget);
+		const updatedTitle = String(formData.get('title'));
+		const updatedUrl = String(formData.get('url'));
+		const updatedThumbnailUrl = String(formData.get('thumbnailUrl'));
 
 		setBookmarks((prevBookmarks) =>
 			prevBookmarks.map((bm) =>
@@ -117,7 +114,7 @@ export default function Home() {
 						<div className="card-body col-span-2">
 							<form
 								onSubmit={addBookmark}
-								className="form-control flex-col gap-4">
+								className=" flex-col flex gap-3">
 								<label className="input input-bordered flex items-center gap-2 w-full">
 									{lang.formAddBookmark.titlePlaceholder}
 									<input
@@ -128,7 +125,7 @@ export default function Home() {
 										required
 									/>
 								</label>
-								<label className="input input-bordered flex items-center gap-2">
+								<label className="input input-bordered flex items-center gap-2 w-full">
 									{lang.formAddBookmark.urlPlaceholder}
 									<input
 										type="text"
@@ -140,7 +137,7 @@ export default function Home() {
 								</label>
 
 								<label className="form-control w-full">
-									<label className="input input-bordered flex items-center gap-2">
+									<label className="input input-bordered flex items-center gap-2 w-full">
 										{lang.formAddBookmark.thumbnailUrlPlaceholder}
 										<input
 											type="text"
@@ -149,14 +146,12 @@ export default function Home() {
 											className="w-full placeholder-neutral-400 placeholder-opacity-50"
 										/>
 									</label>
-									<div className="label">
-										<span className="label-text-alt">{lang.formAddBookmark.thumbnailHint}</span>
-									</div>
+									<div className="label mt-2">{lang.formAddBookmark.thumbnailHint}</div>
 								</label>
 
 								<button
 									type="submit"
-									className="btn btn-primary">
+									className="btn btn-primary mt-3">
 									<Icons.add /> {lang.formAddBookmark.addButton}
 								</button>
 							</form>
@@ -166,22 +161,22 @@ export default function Home() {
 							<div className="grid grid-cols-2 mt-4 gap-2">
 								<button
 									onClick={() => setModal('info')}
-									className="btn border-none col-span-1">
+									className="btn bg-base-100 shadow-xl border-none col-span-1">
 									<Icons.info color="#007bff" /> {lang.buttons.infoButton}
 								</button>
 								<button
 									onClick={() => setModal('temas')}
-									className="btn border-none col-span-1">
+									className="btn bg-base-100 shadow-xl border-none col-span-1">
 									<Icons.pallete color="#28a745" /> {lang.buttons.themeButton}
 								</button>
 								<button
 									onClick={() => setModal('storage')}
-									className="btn border-none col-span-1">
+									className="btn bg-base-100 shadow-xl border-none col-span-1">
 									<Icons.gear color="#17a2b8" /> {lang.buttons.storageButton}
 								</button>
 								<button
 									onClick={() => setModal('lang')}
-									className="btn border-none col-span-1">
+									className="btn bg-base-100 shadow-xl border-none col-span-1">
 									<Icons.language color="#ffc107" /> {lang.buttons.langButton}
 								</button>
 							</div>
@@ -206,7 +201,7 @@ export default function Home() {
 					{bookmarks.map((bookmark, index) => (
 						<div
 							key={index}
-							className="card bg-base-300 shadow-xl">
+							className="card bg-base-100 shadow-xl">
 							<a
 								href={bookmark.url}
 								target="_blank"
@@ -246,188 +241,15 @@ export default function Home() {
 					))}
 				</div>
 
-				{/* Modal de edição */}
-				<input
-					type="checkbox"
-					id="edit-modal"
-					className="modal-toggle"
-					checked={!!editingBookmark}
-					readOnly
+				<EditModal
+					removeFuc={removeBookmark}
+					updateFuc={updateBookmark}
+					moveFuc={moveBookmark}
 				/>
-				<div className="modal">
-					<div className="modal-box relative">
-						<label
-							htmlFor="edit-modal"
-							className="btn btn-sm btn-circle absolute right-2 top-2"
-							onClick={() => setEditingBookmark(null)}>
-							✕
-						</label>
-						<h3 className="text-lg font-bold mb-4">{lang.editBookmark.title}</h3>
-						{editingBookmark && (
-							<form
-								onSubmit={updateBookmark}
-								className="form-control gap-4 mt-4">
-								<input
-									type="text"
-									name="title"
-									defaultValue={editingBookmark.title}
-									placeholder="Título"
-									className="input input-bordered w-full"
-								/>
-								<input
-									type="text"
-									name="url"
-									defaultValue={editingBookmark.url}
-									placeholder="URL"
-									className="input input-bordered w-full"
-									required
-								/>
-								<input
-									type="text"
-									name="thumbnailUrl"
-									defaultValue={editingBookmark.thumbnail}
-									placeholder="URL da Thumbnail (opcional)"
-									className="input input-bordered w-full"
-								/>
-								<div className="card-actions grid grid-cols-2">
-									<button
-										type="submit"
-										className="btn btn-primary">
-										<Icons.save /> {lang.editBookmark.saveButton}
-									</button>
-									<button
-										onClick={() => removeBookmark(editingBookmark.url)}
-										className="btn btn-error w-full">
-										<Icons.trash /> {lang.editBookmark.removeButton}
-									</button>
-								</div>
-								<span className="text-center font-bold text-lg">{lang.editBookmark.moveTitle}</span>
-								<div className="card-actions grid grid-cols-2">
-									<button
-										onClick={() => moveBookmark(editingBookmark.url, 'up')}
-										className="btn btn-outline text-nowrap">
-										<Icons.arrowLeft /> {lang.editBookmark.moveLeft}
-									</button>
-									<button
-										onClick={() => moveBookmark(editingBookmark.url, 'down')}
-										className="btn btn-outline">
-										{lang.editBookmark.moveRight} <Icons.arrowRight />
-									</button>
-								</div>
-							</form>
-						)}
-					</div>
-				</div>
-
-				<input
-					type="checkbox"
-					id="info-modal"
-					className="modal-toggle"
-					checked={modal === 'info'}
-					readOnly
-				/>
-				<div className="modal">
-					<div className="modal-box relative">
-						<label
-							htmlFor="info-modal"
-							className="btn btn-sm btn-circle absolute right-2 top-2"
-							onClick={() => setModal(null)}>
-							✕
-						</label>
-						<h3 className="text-lg font-bold mb-4">{lang.modals.info.title}</h3>
-						{modal === 'info' && (
-							<ul className="list-disc list-inside">
-								<li>
-									{lang.modals.info.description[0]}{' '}
-									<a
-										href="https://github.com/AndreXime/LibreBookmark"
-										target="_blank"
-										rel="noopener noreferrer"
-										className="link link-primary">
-										GitHub
-									</a>
-								</li>
-								<li>{lang.modals.info.description[1]}</li>
-								<li>{lang.modals.info.description[2]}</li>
-								<li>{lang.modals.info.description[3]}</li>
-							</ul>
-						)}
-					</div>
-				</div>
-
-				<input
-					type="checkbox"
-					id="temas-modal"
-					className="modal-toggle"
-					checked={modal === 'temas'}
-					readOnly
-				/>
-				<div className="modal">
-					<div className="modal-box relative">
-						<label
-							htmlFor="temas-modal"
-							className="btn btn-sm btn-circle absolute right-2 top-2"
-							onClick={() => setModal(null)}>
-							✕
-						</label>
-						<h3 className="text-lg font-bold mb-4">{lang.modals.themes.title}</h3>
-						{modal === 'temas' && (
-							<div>
-								<ThemeButtons />
-							</div>
-						)}
-					</div>
-				</div>
-
-				<input
-					type="checkbox"
-					id="storage-modal"
-					className="modal-toggle"
-					checked={modal === 'storage'}
-					readOnly
-				/>
-				<div className="modal">
-					<div className="modal-box relative">
-						<label
-							htmlFor="storage-modal"
-							className="btn btn-sm btn-circle absolute right-2 top-2"
-							onClick={() => setModal(null)}>
-							✕
-						</label>
-						<h3 className="text-lg font-bold mb-4">{lang.modals.storage.title}</h3>
-						{modal === 'storage' && (
-							<StorageButtons
-								lang={lang.modals.storage}
-								setBookmarks={setBookmarks}
-							/>
-						)}
-					</div>
-				</div>
-
-				<input
-					type="checkbox"
-					id="lang-modal"
-					className="modal-toggle"
-					checked={modal === 'lang'}
-					readOnly
-				/>
-				<div className="modal">
-					<div className="modal-box relative">
-						<label
-							htmlFor="lang-modal"
-							className="btn btn-sm btn-circle absolute right-2 top-2"
-							onClick={() => setModal(null)}>
-							✕
-						</label>
-						<h3 className="text-lg font-bold mb-4">{lang.modals.lang.title}</h3>
-						{modal === 'lang' && (
-							<LangButtons
-								setLang={setLang}
-								langStr={langStr}
-							/>
-						)}
-					</div>
-				</div>
+				<InfoModal />
+				<StorageModal />
+				<TemasModal />
+				<LangModal />
 			</div>
 		</div>
 	);
